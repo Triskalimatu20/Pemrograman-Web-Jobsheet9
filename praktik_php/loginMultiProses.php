@@ -1,26 +1,24 @@
 <?php
-include "koneksi.php"; //file koneksi ke postgreSQL
+include "koneksi.php"; 
 
-// Ambil input dari form
-$username = $_POST['username'];
-$password = md5($_POST['password']);
+$username = $_POST['username'] ?? '';
+$password = md5($_POST['password'] ?? '');
 
-$query = "SELECT * FROM user WHERE username='$username' and password='$password'";
+$query = "SELECT * FROM user WHERE username='$username' AND password='$password'";
 $result = mysqli_query($connect, $query);
-$row = mysqli_fetch_assoc($result);
 
-if ($row['level'] == 1) {
-    echo "Anda berhasil login. silahakn menuju " ?>
-    <a href="homeAdmin.html">Halaman HOME</a>
-    <?php
-} elseif ($row['level'] == 2) {
-    echo "Anda berhasil login. silahkan menuju "; ?>
-    <a href="homeGuest.html">Halaman HOME</a>
-    <?php
+if ($result && mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_assoc($result);
+
+    if ($row['level'] === '1') {
+        echo "Anda berhasil login. Silahkan menuju <a href='homeAdmin.html'>Halaman HOME</a>";
+    } elseif ($row['level'] === '2') {
+        echo "Anda berhasil login. Silahkan menuju <a href='homeGuest.html'>Halaman HOME</a>";
+    } else {
+        echo "Level user tidak dikenali.";
+    }
 } else {
-    echo "Anda gagal login. silahkan ";?>
-    <a href="loginform.html">Login kembali</a>
-    <?php
-    echo mysqli_error($connect);
+    // Jika username/password tidak cocok
+    echo "Anda gagal login. Silahkan <a href='loginForm.html'>Login kembali</a>";
 }
 ?>
