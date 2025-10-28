@@ -1,21 +1,25 @@
 <?php
-    include"koneksi.php";
+include "koneksi.php";
 
-    $username=$_POST['username'];
-    $password=md5($_POST['password']);
+$username = $_POST['username'];
+$password = md5($_POST['password']);
 
-    $query="SELECT * FROM user WHERE username='$username' and password='$password'";
-    $result=mysqli_query($connect, $query);
-    $cek=mysqli_num_rows($result);
+$query = "SELECT * FROM public.\"user\" WHERE username = '$username' AND password = '$password'";
+$result = pg_query($conn, $query);
 
-    if ($cek) {
-        echo "Anda berhasil login, silahkan menuju " ?>
-        <a href="homeAdmin.html">Halaman HOME</a>
-    <?php
-    } else {
-        echo "Anda gagal login, silahkan ";?>
-        <a href="loginForm.html">Login kembali</a>
-    <?php
-        echo mysqli_error($connect);
-    }
+if (!$result) {
+    die("Query gagal: " . pg_last_error($conn));
+}
+
+$cek = pg_num_rows($result);
+
+if ($cek > 0) {
+    echo "Anda berhasil login. Silakan menuju ";
+    echo "<a href='homeAdmin.html'>Halaman HOME</a>";
+} else {
+    echo "Anda gagal login. Silakan ";
+    echo "<a href='loginForm.html'>Login kembali</a>";
+}
+
+pg_close($conn);
 ?>

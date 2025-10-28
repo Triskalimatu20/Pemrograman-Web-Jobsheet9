@@ -1,16 +1,22 @@
 <?php
-// Konfigurasi koneksi database 
-$host = "localhost";
-$user = "root";
-$pass = "Triskamysql20052005#!";
-$db   = "prakwebdb";  
+$conn = pg_connect("host=localhost dbname=prakwebdb user=postgres password=Triskapostgre20#");
 
-$connect = mysqli_connect($host, $user, $pass, $db);
-
-if (!$connect) {
-    die("Koneksi database gagal: " . mysqli_connect_error());
+if (!$conn) {
+    die("Koneksi ke PostgreSQL gagal: " . pg_last_error());
 }
 
-//set karakter
-mysqli_set_charset($connect, "utf8mb4");
+// Buat tabel users jika belum ada
+$sql_create = 'CREATE TABLE IF NOT EXISTS public."user" (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50),
+    password VARCHAR(50)
+)';
+ 
+$result = pg_query($conn, $sql_create);
 
+if ($result) { 
+    echo "Koneksi ke Database Berhasil.<br>";
+} else { 
+    echo "Gagal membuat tabel: " . pg_last_error($conn); 
+}
+?>
